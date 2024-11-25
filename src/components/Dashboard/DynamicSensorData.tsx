@@ -1,5 +1,5 @@
 import React from "react";
-import { iconMapping } from "../../utils/constants";
+//import { iconMapping } from "../../utils/constants";
 import { Sensor } from "../../interface_types/types";
 import styled from "styled-components";
 
@@ -13,22 +13,10 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensor }) => {
       <h4>Données provenant du capteur {sensor.name}</h4>
       <SubContainer>
         {Object.entries(sensor.data).map(([key, value]) => {
-          const IconOrUrl = iconMapping[key] || iconMapping["default"];
+          // const IconOrUrl = iconMapping[key] || iconMapping["default"];
 
           return (
             <ContainerData key={key}>
-              {/* Affiche une icône ou une image en fonction du type */}
-              {/*<span style={{ marginRight: "10px" }}>
-                {typeof IconOrUrl === "string" ? (
-                  <img
-                    src={IconOrUrl}
-                    alt={`${key} icon`}
-                    style={{ width: "20px", height: "20px" }}
-                  />
-                ) : (
-                  <IconOrUrl style={{ fontSize: "1.5rem" }} />
-                )}
-              </span> */}
               <DataLine>
                 <div>{key.charAt(0).toUpperCase() + key.slice(1)}</div>
                 <div className="value"> {value}</div>
@@ -58,7 +46,7 @@ const SubContainer = styled.div`
   border-radius: 10px;
   background-color: #252525;
   width: 350px;
-  padding: 10px 0;
+  padding: 20px 0;
 `;
 
 const ContainerData = styled.div`

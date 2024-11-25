@@ -1,12 +1,9 @@
-import React from "react";
 import Sidebar from "../components/Layout/Sidebar";
 import { Menu } from "../utils/constants";
 import styled from "styled-components";
 import MainInterface from "../components/MainInterface";
 
-type Props = {};
-
-const DashboardPage = (props: Props) => {
+const DashboardPage = () => {
   return (
     <Container style={{ backgroundColor: "#000" }}>
       <Sidebar list={Menu} />

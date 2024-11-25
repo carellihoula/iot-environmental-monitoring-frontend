@@ -1,11 +1,8 @@
-import React from "react";
 import styled from "styled-components";
 import Header from "./Layout/Header";
 import Dashboard from "./Dashboard/Dashboard";
 
-type Props = {};
-
-const MainInterface = (props: Props) => {
+const MainInterface = () => {
   return (
     <Container>
       <Header />
