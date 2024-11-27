@@ -3,8 +3,11 @@ import styled from "styled-components";
 import { FiSearch } from "react-icons/fi";
 import { BsQuestionCircle, BsBell } from "react-icons/bs";
 import avatar from "/images/aa.jpg";
+import { useMQTTContext } from "../../context/MqttContext";
 
 const Header: React.FC = () => {
+  const { sensors } = useMQTTContext();
+  console.log(sensors);
   return (
     <Container>
       {/* Barre de recherche */}
@@ -41,8 +44,10 @@ const Container = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #000; /* Couleur de fond noir */
-  color: #fff; /* Texte blanc */
+  background-color: #000;
+  color: #fff;
+  margin-bottom: 20px;
+  //background-color: red;
   .search__bar__container {
     display: flex;
     //background-color: red;
@@ -59,6 +64,7 @@ const SearchBar = styled.div`
   color: #fff;
   width: 300px;
   height: 35px;
+  margin-left: 195px;
 
   input {
     flex: 1;

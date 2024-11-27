@@ -1,12 +1,14 @@
 import styled from "styled-components";
 import { IMenu } from "../../interface_types/interface";
 import ensim_logo from "/images/ensim-logo.png";
+import { useMenuContext } from "../../context/MenuContext";
 
 interface SidebarProps {
   list: IMenu[];
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ list }) => {
+  const { selectedMenu, setSelectedMenu } = useMenuContext();
   return (
     <Container>
       <LogoEnsim>
@@ -15,7 +17,11 @@ const Sidebar: React.FC<SidebarProps> = ({ list }) => {
       </LogoEnsim>
 
       {list.map((item) => (
-        <MenuItem key={item.id}>
+        <MenuItem
+          key={item.id}
+          onClick={() => setSelectedMenu(item)}
+          $isSelected={selectedMenu?.id === item.id}
+        >
           {<item.icon size={24} color="#FFF" />}
           <p className="title">{item.title}</p>
         </MenuItem>
@@ -35,7 +41,7 @@ const Container = styled.div`
   width: 15%;
 `;
 
-const MenuItem = styled.div`
+const MenuItem = styled.div<{ $isSelected: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -43,6 +49,7 @@ const MenuItem = styled.div`
   box-sizing: border-box;
   border-radius: 5px;
   gap: 10px;
+  background: ${(props) => props.$isSelected && "#252525"};
 
   &:hover {
     background-color: #252525;

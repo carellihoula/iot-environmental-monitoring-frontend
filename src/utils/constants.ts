@@ -17,17 +17,17 @@ export const Menu: IMenu[] = [
     icon: MdDashboard,
   },
   {
-    id: 1,
+    id: 2,
     title: "Ajout Capteur",
     icon: IoIosAddCircleOutline,
   },
   {
-    id: 1,
+    id: 3,
     title: "Choix de capteurs",
     icon: MdSensors,
   },
   {
-    id: 1,
+    id: 4,
     title: "Paramètres",
     icon: CiSettings,
   },
@@ -55,9 +55,34 @@ export const generateFakeSensorData = (): SensorData => ({
   return () => clearInterval(interval); // Nettoie l'intervalle lors du démontage
 }, []);*/
 
-export const sensor: Sensor = {
-  id: "sensor_12345",
-  name: "DHT22",
-  owner_id: "user_56789",
-  data: generateFakeSensorData(),
-};
+export const sensors: Sensor[] = [
+  {
+    id: "1234",
+    name: "DHT22",
+    owner_id: "1258_luco",
+    data: {
+      temperature: 25,
+      humidity: 60,
+    },
+  },
+  {
+    id: "5678",
+    name: "BME280",
+    owner_id: "1258_carel",
+    data: {
+      temperature: 35,
+      humidity: 30,
+      pressure: 1050,
+    },
+  },
+  {
+    id: "91011",
+    name: "ENSIM",
+    owner_id: "1258_lihoula",
+    data: {
+      temperature: -20,
+      humidity: 80,
+      pressure: 920,
+    },
+  },
+];

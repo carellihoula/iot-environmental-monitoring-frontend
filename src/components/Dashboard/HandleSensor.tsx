@@ -1,47 +1,61 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Sensor } from "../../interface_types/types";
 import Toggle from "../Common/Toogle";
 import { iconMapping } from "../../utils/constants";
+import { useSensorContext } from "../../context/SensorContext";
 
 interface HandleSensorProps {
-  sensor: Sensor;
+  sensors: Sensor[];
 }
 
-const HandleSensor: React.FC<HandleSensorProps> = ({ sensor }) => {
-  const handleToggleChange = (state: boolean) => {
-    console.log("Toggle state:", state);
-  };
+const HandleSensor: React.FC<HandleSensorProps> = ({ sensors }) => {
+  const { toggleMeasure } = useSensorContext();
+
+  // Initialiser toutes les mesures comme visibles au montage du composant
+  useEffect(() => {
+    sensors.forEach((sensor) => {
+      Object.keys(sensor.data).forEach((key) => {
+        toggleMeasure(sensor.id, key, true); // Toutes les mesures sont visibles par défaut
+      });
+    });
+  }, [sensors]);
   return (
     <Container>
-      <h4>Les Mesures du Capteur {sensor.name}</h4>
-      <SubContainer>
-        {Object.keys(sensor.data).map((key, index) => {
-          console.log(key);
-          const IconOrUrl = iconMapping[key] || iconMapping["default"];
-          return (
-            <Measures key={index}>
-              <SubMeasureConatiner>
-                <div className="measure">
-                  <span style={{ marginRight: "10px" }}>
-                    {typeof IconOrUrl === "string" ? (
-                      <img
-                        src={IconOrUrl}
-                        alt={`${key} icon`}
-                        style={{ width: "20px", height: "20px" }}
-                      />
-                    ) : (
-                      <IconOrUrl size={30} color="#FFF" />
-                    )}
-                  </span>
-                  <div>{key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                </div>
-                <Toggle initialState={true} onToggle={handleToggleChange} />
-              </SubMeasureConatiner>
-            </Measures>
-          );
-        })}
-      </SubContainer>
+      {sensors.map((sensor) => (
+        <SensorContainer key={sensor.id}>
+          <h4>Les Mesures du Capteur {sensor.name}</h4>
+          <SubContainer>
+            {Object.keys(sensor.data).map((key, index) => {
+              const IconOrUrl = iconMapping[key] || iconMapping["default"];
+              return (
+                <Measures key={index}>
+                  <SubMeasureContainer>
+                    <div className="measure">
+                      <span style={{ marginRight: "10px" }}>
+                        {typeof IconOrUrl === "string" ? (
+                          <img
+                            src={IconOrUrl}
+                            alt={`${key} icon`}
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                        ) : (
+                          <IconOrUrl size={30} color="#FFF" />
+                        )}
+                      </span>
+                      <div>{key.charAt(0).toUpperCase() + key.slice(1)}</div>
+                    </div>
+                    <Toggle
+                      initialState={true}
+                      onToggle={(state) => toggleMeasure(sensor.id, key, state)}
+                    />
+                  </SubMeasureContainer>
+                </Measures>
+              );
+            })}
+          </SubContainer>
+        </SensorContainer>
+      ))}
     </Container>
   );
 };
@@ -49,8 +63,14 @@ const HandleSensor: React.FC<HandleSensorProps> = ({ sensor }) => {
 export default HandleSensor;
 
 const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 50px;
+
   color: #fff;
-  width: 350px;
+  width: 80%;
+  //background-color: blue; //= > debug
   h4 {
     color: #fff;
     margin-bottom: 10px;
@@ -73,7 +93,7 @@ const SubContainer = styled.div`
   width: 350px;
   padding: 20px 0;
 `;
-const SubMeasureConatiner = styled.div`
+const SubMeasureContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -84,4 +104,9 @@ const SubMeasureConatiner = styled.div`
     display: flex;
     gap: 5px;
   }
+`;
+
+const SensorContainer = styled.div`
+  //background-color: blue; //=> debug
+  width: 350px;
 `;
