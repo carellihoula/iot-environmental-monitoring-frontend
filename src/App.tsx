@@ -1,10 +1,21 @@
-import DashboardPage from "./pages/DashboardPage";
+import { RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { MenuProvider } from "./context/MenuContext";
+import { MQTTProvider } from "./context/MqttContext";
+import { SensorProvider } from "./context/SensorContext";
+import router from "./router";
 
 function App() {
   return (
-    <div className="App" style={{ height: "100%" }}>
-      <DashboardPage />
-    </div>
+    <AuthProvider>
+      <MQTTProvider>
+        <SensorProvider>
+          <MenuProvider>
+            <RouterProvider router={router} />
+          </MenuProvider>
+        </SensorProvider>
+      </MQTTProvider>
+    </AuthProvider>
   );
 }
 
