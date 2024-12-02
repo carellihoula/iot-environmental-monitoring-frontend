@@ -50,6 +50,7 @@ const Container = styled.header`
   align-items: center;
   padding: 1rem 2rem;
   background-color: #000;
+  border-bottom: 0.5px solid #818080;
   color: #fff;
   margin-bottom: 20px;
   //background-color: red;
