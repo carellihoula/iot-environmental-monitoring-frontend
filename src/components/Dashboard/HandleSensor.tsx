@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { Sensor } from "../../interface_types/types";
-import Toggle from "../Common/Toogle";
-import { iconMapping } from "../../utils/constants";
 import { useSensorContext } from "../../context/SensorContext";
+import { Sensor } from "../../interface_types/types";
+import { iconMapping } from "../../utils/constants";
+import Toggle from "../Common/Toogle";
 
 interface HandleSensorProps {
   sensors: Sensor[];
@@ -19,7 +19,7 @@ const HandleSensor: React.FC<HandleSensorProps> = ({ sensors }) => {
         toggleMeasure(sensor.id, key, true); // Toutes les mesures sont visibles par défaut
       });
     });
-  }, [sensors]);
+  }, []);
   return (
     <Container>
       {sensors.map((sensor) => (

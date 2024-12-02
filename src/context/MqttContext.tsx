@@ -1,12 +1,13 @@
+import { Buffer } from "buffer"; // Nécessaire si 'Buffer' est utilisé
+import mqtt, { MqttClient } from "mqtt";
 import React, {
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useState,
-  ReactNode,
 } from "react";
-import mqtt, { MqttClient } from "mqtt";
-import { Buffer } from "buffer"; // Nécessaire si 'Buffer' est utilisé
+import { validateSensorData } from "../utils/validateSensorData";
 
 // Types pour les données des capteurs
 export interface SensorData {
@@ -35,6 +36,7 @@ export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [sensors, setSensors] = useState<SensorData[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const client: MqttClient = mqtt.connect(MQTT_URL, {
@@ -43,7 +45,7 @@ export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
     });
 
     // S'abonner au topic spécifique à l'utilisateur
-    const topic = `iotensim/${CURRENT_USER_ID}/+/data`;
+    const topic = `iotensim/${CURRENT_USER_ID}/data`;
     //const topic = `esp32/frontend/data`;
     client.on("connect", () => {
       console.log("Connected to MQTT broker");
@@ -57,7 +59,16 @@ export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
     client.on("message", (_topic: string, message: Buffer) => {
       try {
         const sensorData: SensorData = JSON.parse(message.toString());
+        if (!validateSensorData(sensorData)) {
+          setError(
+            `Le JSON reçu est invalide. Format recommandé : {"id":"string","name":"string","owner_id":"string","data":{"field1":number,"field2":number,...}}`
+          );
+          console.log(error);
+          return;
+        }
 
+        // Si le JSON est valide, mettre à jour les capteurs
+        setError(null);
         setSensors((prevSensors) => {
           const sensorIndex = prevSensors.findIndex(
             (sensor) => sensor.id === sensorData.id
