@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import logo_lemans_univ from "/images/logo-univ.png";
 
 interface LoginProps {
   onLogin: (email: string, password: string) => void;
@@ -41,6 +42,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           />
         </FormGroup>
         <Button type="submit">Sign In</Button>
+        <EntLogin>
+          <p>Avec votre Compte </p>
+          <img
+            src={logo_lemans_univ}
+            alt="ensim-logo"
+            className="logo_lemans"
+          />
+        </EntLogin>
       </form>
     </FormContainer>
   );
@@ -58,6 +67,26 @@ const FormContainer = styled.div`
   padding: 20px;
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
   background-color: #313338;
+`;
+
+export const EntLogin = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4a90e2;
+  height: 60px;
+  border-radius: 4px;
+  gap: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+  &:hover {
+    background-color: #0056b3;
+  }
+  .logo_lemans {
+    border-radius: 10px;
+    width: 150px;
+    height: 40px;
+  }
 `;
 
 const Title = styled.h2`
@@ -88,7 +117,7 @@ const Input = styled.input`
 const Button = styled.button`
   width: 100%;
   padding: 10px 0;
-  background-color: #007bff;
+  background-color: #4a90e2;
   color: white;
   border: none;
   border-radius: 4px;

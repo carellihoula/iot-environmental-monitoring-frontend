@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { EntLogin } from "./Login";
+import logo_lemans_univ from "/images/logo-univ.png";
 
 interface RegisterProps {
   onRegister: (name: string, email: string, password: string) => void;
@@ -9,6 +11,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,17 +45,36 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="register-password">Password :</Label>
+          <Label htmlFor="register-password">Passwords</Label>
           <Input
             type="password"
             id="register-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="Typz your password"
+            placeholder="Type your password"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="confirm-password">Confirm Password</Label>
+          <Input
+            type="password"
+            id="confirm-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            placeholder="Confirm your password"
           />
         </FormGroup>
         <Button type="submit">Sign Up</Button>
+        <EntLogin>
+          <p>Avec votre Compte </p>
+          <img
+            src={logo_lemans_univ}
+            alt="ensim-logo"
+            className="logo_lemans"
+          />
+        </EntLogin>
       </form>
     </FormContainer>
   );
@@ -65,7 +87,7 @@ const FormContainer = styled.div`
   width: 350px;
   max-width: 400px;
   border: 1px solid #ccc;
-  height: 450px;
+  height: auto;
   color: #fff;
   border-radius: 8px;
   padding: 20px;
@@ -101,7 +123,7 @@ const Input = styled.input`
 const Button = styled.button`
   width: 100%;
   padding: 10px 0;
-  background-color: #28a745;
+  background-color: #4a90e2;
   color: white;
   border: none;
   border-radius: 4px;
@@ -109,6 +131,6 @@ const Button = styled.button`
   font-size: 16px;
 
   &:hover {
-    background-color: #218838;
+    background-color: #0056b3;
   }
 `;
