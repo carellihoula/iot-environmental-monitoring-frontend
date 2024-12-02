@@ -1,7 +1,7 @@
 import styled from "styled-components";
+import { useMenuContext } from "../../context/MenuContext";
 import { IMenu } from "../../interface_types/interface";
 import ensim_logo from "/images/ensim-logo.png";
-import { useMenuContext } from "../../context/MenuContext";
 
 interface SidebarProps {
   list: IMenu[];
@@ -13,7 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ list }) => {
     <Container>
       <LogoEnsim>
         <img src={ensim_logo} alt="logo ensim" width={50} height={50} />
-        <h1>ENSIM IOT</h1>
+        <h1 className="raleway-bold">ENSIM IOT</h1>
       </LogoEnsim>
 
       {list.map((item) => (
@@ -23,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ list }) => {
           $isSelected={selectedMenu?.id === item.id}
         >
           {<item.icon size={24} color="#FFF" />}
-          <p className="title">{item.title}</p>
+          <p className="title raleway-bold">{item.title}</p>
         </MenuItem>
       ))}
     </Container>
@@ -59,6 +59,7 @@ const MenuItem = styled.div<{ $isSelected: boolean }>`
   .title {
     color: #fff;
     font-size: 1.2rem;
+    //font-size: "Raleway", sans-serif;
   }
 `;
 
@@ -72,6 +73,5 @@ const LogoEnsim = styled.div`
   h1 {
     color: #fff;
     text-align: center;
-    font-family: "Times New Roman", Times, serif;
   }
 `;

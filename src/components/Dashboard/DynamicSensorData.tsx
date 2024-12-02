@@ -1,8 +1,8 @@
 import React from "react";
 //import { iconMapping } from "../../utils/constants";
-import { Sensor } from "../../interface_types/types";
 import styled from "styled-components";
 import { useSensorContext } from "../../context/SensorContext";
+import { Sensor } from "../../interface_types/types";
 
 interface DynamicSensorDataProps {
   sensors: Sensor[];
@@ -56,6 +56,7 @@ const Container = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 50px;
+  font-family: "Raleway", sans-serif;
   //width: 100%;
   h4 {
     color: #fff;
@@ -82,6 +83,9 @@ const ContainerData = styled.div`
   padding: 5px;
 
   .value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: #000;
     text-align: center;
     min-width: 60px;

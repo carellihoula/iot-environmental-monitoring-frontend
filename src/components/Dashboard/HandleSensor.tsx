@@ -67,7 +67,7 @@ const Container = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 50px;
-
+  font-family: "Raleway", sans-serif;
   color: #fff;
   width: 80%;
   //background-color: blue; //= > debug

@@ -1,0 +1,35 @@
+/* src/styles/fonts.css */
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+/* Raleway Fonts */
+.raleway-regular {
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+}
+
+.raleway-medium {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+}
+
+.raleway-bold {
+  font-family: "Raleway", sans-serif;
+  font-weight: 700;
+}
+
+/* Roboto Fonts */
+.roboto-regular {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+
+.roboto-medium {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+}
+
+.roboto-bold {
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+}

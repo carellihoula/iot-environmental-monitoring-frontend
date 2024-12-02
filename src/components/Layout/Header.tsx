@@ -1,9 +1,9 @@
 import React from "react";
-import styled from "styled-components";
+import { BsBell, BsQuestionCircle } from "react-icons/bs";
 import { FiSearch } from "react-icons/fi";
-import { BsQuestionCircle, BsBell } from "react-icons/bs";
-import avatar from "/images/aa.jpg";
+import styled from "styled-components";
 import { useMQTTContext } from "../../context/MqttContext";
+import avatar from "/images/aa.jpg";
 
 const Header: React.FC = () => {
   const { sensors } = useMQTTContext();
@@ -13,13 +13,18 @@ const Header: React.FC = () => {
       {/* Barre de recherche */}
       <div className="search__bar__container">
         <SearchBar>
-          <input type="text" placeholder="Search type of keywords" />
+          <input
+            type="text"
+            placeholder="Search type of keywords"
+            className="roboto-medium"
+          />
           <FiSearch size={20} />
         </SearchBar>
       </div>
 
       {/* Icônes et avatar */}
       <IconsContainer>
+        <Documentation className="raleway-bold">Documentation</Documentation>
         <IconWrapper>
           <BsQuestionCircle size={20} />
         </IconWrapper>
@@ -28,7 +33,7 @@ const Header: React.FC = () => {
         </IconWrapper>
         <UserProfile>
           <img src={avatar} alt="User" />
-          <span>Carel</span>
+          <span className="raleway-bold">Etudiant 01</span>
           <DropdownIcon>▼</DropdownIcon>
         </UserProfile>
       </IconsContainer>
@@ -132,4 +137,16 @@ const UserProfile = styled.div`
 const DropdownIcon = styled.span`
   font-size: 0.8rem;
   color: #bbb;
+`;
+const Documentation = styled.div`
+  background-color: #333;
+  border-radius: 5px;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  &:hover {
+    background-color: #444;
+  }
 `;
