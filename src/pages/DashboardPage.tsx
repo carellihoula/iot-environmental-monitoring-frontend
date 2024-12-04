@@ -1,7 +1,7 @@
-import Sidebar from "../components/Layout/Sidebar";
-import { Menu } from "../utils/constants";
 import styled from "styled-components";
+import Sidebar from "../components/Layout/Sidebar";
 import MainInterface from "../components/MainInterface";
+import { Menu } from "../utils/constants";
 
 const DashboardPage = () => {
   return (
@@ -16,7 +16,7 @@ export default DashboardPage;
 
 const Container = styled.div`
   display: flex;
-
   width: 100%;
   height: 100vh;
+  overflow-y: hidden;
 `;

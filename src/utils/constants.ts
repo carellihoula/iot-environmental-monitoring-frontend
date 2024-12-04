@@ -1,14 +1,12 @@
-import { MdDashboard } from "react-icons/md";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import { MdSensors } from "react-icons/md";
-import { CiSettings } from "react-icons/ci";
-import { IMenu } from "../interface_types/interface";
-import { FaTemperatureHigh } from "react-icons/fa";
-import { WiHumidity } from "react-icons/wi";
-import { AiOutlineDashboard } from "react-icons/ai";
 import { IconType } from "react-icons";
-import { Sensor, SensorData } from "../interface_types/types";
+import { AiOutlineDashboard } from "react-icons/ai";
+import { CiSettings } from "react-icons/ci";
 import { FaTemperatureEmpty } from "react-icons/fa6";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { MdDashboard, MdSensors } from "react-icons/md";
+import { WiHumidity } from "react-icons/wi";
+import { IMenu } from "../interface_types/interface";
+import { Sensor, SensorData } from "../interface_types/types";
 
 export const Menu: IMenu[] = [
   {
@@ -61,8 +59,8 @@ export const sensors: Sensor[] = [
     name: "DHT22",
     owner_id: "1258_luco",
     data: {
-      temperature: 25,
-      humidity: 60,
+      temperature: 22,
+      humidity: 55,
     },
   },
   {
@@ -70,9 +68,9 @@ export const sensors: Sensor[] = [
     name: "BME280",
     owner_id: "1258_carel",
     data: {
-      temperature: 35,
-      humidity: 30,
-      pressure: 1050,
+      temperature: 24,
+      humidity: 45,
+      pressure: 1013,
     },
   },
   {
@@ -80,9 +78,9 @@ export const sensors: Sensor[] = [
     name: "ENSIM",
     owner_id: "1258_lihoula",
     data: {
-      temperature: -20,
-      humidity: 80,
-      pressure: 920,
+      temperature: 19,
+      humidity: 60,
+      pressure: 1005,
     },
   },
 ];

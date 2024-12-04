@@ -30,7 +30,7 @@ const MQTT_URL =
   "wss://fa815df1d66e462186a324bd1494e4c1.s1.eu.hivemq.cloud:8884/mqtt";
 const MQTT_USERNAME = "carellihoula";
 const MQTT_PASSWORD = "989408@Lce";
-const CURRENT_USER_ID = "1234"; // Remplacez par l'ID de l'utilisateur connecté
+const CURRENT_USER_ID = "1258"; // Remplacez par l'ID de l'utilisateur connecté
 
 export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
   children,
