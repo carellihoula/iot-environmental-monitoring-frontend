@@ -16,12 +16,12 @@ export const Menu: IMenu[] = [
   },
   {
     id: 2,
-    title: "Ajout Capteur",
+    title: "Ajout Dispositif",
     icon: IoIosAddCircleOutline,
   },
   {
     id: 3,
-    title: "Choix de capteurs",
+    title: "Choix de Dispositifs",
     icon: MdSensors,
   },
   {

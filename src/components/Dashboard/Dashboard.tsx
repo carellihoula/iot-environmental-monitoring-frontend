@@ -1,8 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useMenuContext } from "../../context/MenuContext";
-//import { sensors } from "../../utils/constants";
-import { useMQTTContext } from "../../context/MqttContext";
+import { sensors } from "../../utils/constants";
 import AddSensor from "../sensors/AddSensor";
 import SensorSelection from "../sensors/SensorSelection";
 import Settings from "../sensors/Settings";
@@ -12,7 +11,7 @@ import HandleSensor from "./HandleSensor";
 const Dashboard: React.FC = () => {
   // État pour un seul capteur
   const { selectedMenu } = useMenuContext();
-  const { sensors } = useMQTTContext();
+  //const { sensors } = useMQTTContext();
 
   const renderContent = () => {
     switch (selectedMenu?.id) {

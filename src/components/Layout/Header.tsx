@@ -33,7 +33,7 @@ const Header: React.FC = () => {
         </IconWrapper>
         <UserProfile>
           <img src={avatar} alt="User" />
-          <span className="raleway-bold">Etudiant 01</span>
+          <span className="raleway-bold">Carel Eng</span>
           <DropdownIcon>▼</DropdownIcon>
         </UserProfile>
       </IconsContainer>
