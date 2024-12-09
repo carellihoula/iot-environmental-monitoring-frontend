@@ -3,12 +3,13 @@ import { CiCirclePlus } from "react-icons/ci";
 import { TiDelete } from "react-icons/ti";
 import styled from "styled-components";
 import { Sensor } from "../../interface_types/types";
+import CopyToClipboard from "../Common/CopyToClipboard";
 import InputField from "../Common/InputField";
 
 const SensorForm: React.FC = () => {
   const [formData, setFormData] = useState<Sensor>({
     id: "carel1998",
-    name: "DHT22",
+    name: "",
     owner_id: "1258",
     data: {},
   });
@@ -20,7 +21,12 @@ const SensorForm: React.FC = () => {
       data: { ...prev.data, [key]: value },
     }));
   };
-
+  const handleCopy = () => {
+    const json = JSON.stringify(formData, null, 2);
+    navigator.clipboard.writeText(json).then(() => {
+      alert("JSON copié dans le presse-papiers !");
+    });
+  };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Données soumises :", formData);
@@ -28,24 +34,21 @@ const SensorForm: React.FC = () => {
 
   return (
     <Container>
-      <form onSubmit={handleSubmit} style={{ flex: 1, padding: "10px" }}>
-        <h2>Ajouter un Capteur</h2>
+      <form onSubmit={handleSubmit}>
+        <h2 className="raleway-bold">AJOUTER UN DISPOSITIF</h2>
 
-        <div>
-          <label>Nom du capteur :</label>
+        <h3 className="raleway-bold">Nom du Dispositif</h3>
+        <InputField
+          placeholder="Entrez le nom"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          height="55px"
+          width="100%"
+          margin="10px 0"
+          icon={<CiCirclePlus size={20} />}
+        />
 
-          <InputField
-            placeholder="Entrez le nom"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            width="100%"
-            height="40px"
-            margin="10px 0"
-            icon={<CiCirclePlus size={20} />}
-          />
-        </div>
-
-        <h3>Mesures</h3>
+        <h3 className="raleway-bold">Mesures</h3>
         <MeasurementAdder addMeasurement={addMeasurement} />
 
         {/* Liste des mesures */}
@@ -65,25 +68,16 @@ const SensorForm: React.FC = () => {
       </form>
 
       {/* Affichage du JSON */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "15px",
-          flex: 1,
-          backgroundColor: "#252525",
-          color: "#fff",
-          padding: "10px",
-          borderRadius: "5px",
-        }}
-      >
+      <JsonContainer>
         <h3>Format JSON</h3>
+        <CopyToClipboard
+          text={JSON.stringify(formData, null, 2)}
+          onCopy={() => console.log("JSON copié !")}
+        />
         <pre style={{ whiteSpace: "pre-wrap" }}>
           {JSON.stringify(formData, null, 2)}
         </pre>
-      </div>
+      </JsonContainer>
     </Container>
   );
 };
@@ -114,13 +108,13 @@ const MeasurementAdder: React.FC<MeasurementAdderProps> = ({
         readOnly
         style={{ display: "none" }}
       />
+
       <InputField
         placeholder="Ajouter une mesure"
         value={key}
         onChange={(e) => setKey(e.target.value)}
+        height="55px"
         width="100%"
-        height="40px"
-        margin="10px 0"
         icon={<CiCirclePlus size={20} />}
       />
       <button
@@ -136,16 +130,23 @@ const MeasurementAdder: React.FC<MeasurementAdderProps> = ({
 export default SensorForm;
 
 const Container = styled.div`
-  display: "flex";
-  flex-direction: row;
-  justify-content: "space-between";
-  gap: "20px";
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
   width: 100%;
-  // background-color: red;
-
+  //background-color: blue;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 70%;
+    h2 {
+      text-align: center;
+    }
+  }
   .btn__submit {
     background-color: #3c1bd1;
-    padding: 5px;
+    padding: 0.5rem 0;
     border-style: none;
     text-align: center;
     border-radius: 5px;
@@ -166,6 +167,7 @@ const Container = styled.div`
     border-radius: 10px;
     gap: 10px;
     padding: 15px;
+    box-sizing: border-box;
     width: 100%;
     background-color: #252525;
   }
@@ -179,29 +181,59 @@ const Mesure = styled.div`
   background-color: #000;
   padding: 5px;
   margin-bottom: 5px;
-  width: auto;
+
   border-radius: 5px;
 `;
 
 const MeasurementAdderStyled = styled.div`
   display: flex;
   align-items: center;
+
+  // background-color: red;
+  width: 100%;
   gap: 10px;
 
   .add__measure {
-    height: 40px;
-    width: 300px;
-    background-color: #252525;
-    box-sizing: content-box;
+    height: 55px;
+    background-color: #3c1bd1;
+    box-sizing: border-box;
     border-style: none;
-    margin-bottom: 5px;
     font-weight: bold;
     color: #fff;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 5rem;
     border-radius: 10px;
     cursor: pointer;
     &:hover {
-      background-color: #4e4c4c;
+      background-color: #2e02f5;
     }
+  }
+`;
+
+const JsonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex: 1;
+  background-color: #252525;
+  color: #fff;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+`;
+
+const CopyButton = styled.button`
+  background-color: #3c1bd1;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+  &:hover {
+    background-color: #2e02f5;
   }
 `;

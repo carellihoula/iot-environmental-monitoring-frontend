@@ -15,8 +15,9 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
     <Container>
       {sensors.map((sensor) => {
         // Vérifier si toutes les mesures pour ce capteur sont désactivées
+
         const allMeasuresHiddenForSensor = Object.keys(sensor.data).every(
-          (key) => !visibleMeasures[sensor.id]?.[key]
+          (key) => !visibleMeasures[sensor.id!]?.[key]
         );
 
         return (
@@ -28,7 +29,7 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
               ) : (
                 Object.entries(sensor.data).map(([key, value]) => {
                   // Ne pas afficher si la mesure est masquée
-                  if (!visibleMeasures[sensor.id]?.[key]) return null;
+                  if (!visibleMeasures[sensor.id!]?.[key]) return null;
 
                   return (
                     <ContainerData key={`${sensor.id}-${key}`}>

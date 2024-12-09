@@ -12,6 +12,8 @@ const AddSensor = () => {
 export default AddSensor;
 
 const Container = styled.div`
+  display: flex;
   color: #fff;
-  width: 50%;
+  //background-color: red;
+  width: 80%;
 `;

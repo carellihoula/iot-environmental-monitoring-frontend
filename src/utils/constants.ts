@@ -83,4 +83,24 @@ export const sensors: Sensor[] = [
       pressure: 1005,
     },
   },
+  /*{
+    id: "sbsb",
+    name: "LEMANS",
+    owner_id: "1258_lihoula",
+    data: {
+      temperature: 19,
+      humidity: 60,
+      pressure: 1005,
+    },
+  },
+  {
+    id: "sbsb",
+    name: "LEMANS",
+    owner_id: "1258_lihoula",
+    data: {
+      temperature: 19,
+      humidity: 60,
+      pressure: 1005,
+    },
+  },*/
 ];

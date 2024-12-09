@@ -16,7 +16,7 @@ const HandleSensor: React.FC<HandleSensorProps> = ({ sensors }) => {
   useEffect(() => {
     sensors.forEach((sensor) => {
       Object.keys(sensor.data).forEach((key) => {
-        toggleMeasure(sensor.id, key, true); // Toutes les mesures sont visibles par défaut
+        toggleMeasure(sensor.id!, key, true); // Toutes les mesures sont visibles par défaut
       });
     });
   }, []);
@@ -47,7 +47,9 @@ const HandleSensor: React.FC<HandleSensorProps> = ({ sensors }) => {
                     </div>
                     <Toggle
                       initialState={true}
-                      onToggle={(state) => toggleMeasure(sensor.id, key, state)}
+                      onToggle={(state) =>
+                        toggleMeasure(sensor.id!, key, state)
+                      }
                     />
                   </SubMeasureContainer>
                 </Measures>

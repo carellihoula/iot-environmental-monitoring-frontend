@@ -46,5 +46,6 @@ const Container = styled.div`
   gap: 50px;
   height: 100%;
   //background-color: red;
+  overflow-y: auto;
   margin-top: 50px;
 `;
