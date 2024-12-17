@@ -25,13 +25,6 @@ interface MQTTContextType {
 // Créer le contexte MQTT
 const MQTTContext = createContext<MQTTContextType | undefined>(undefined);
 
-// Configuration MQTT
-const MQTT_URL =
-  "wss://fa815df1d66e462186a324bd1494e4c1.s1.eu.hivemq.cloud:8884/mqtt";
-const MQTT_USERNAME = "carellihoula";
-const MQTT_PASSWORD = "989408@Lce";
-const CURRENT_USER_ID = "1258"; // Remplacez par l'ID de l'utilisateur connecté
-
 export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -39,13 +32,21 @@ export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const client: MqttClient = mqtt.connect(MQTT_URL, {
-      username: MQTT_USERNAME,
-      password: MQTT_PASSWORD,
+    const mqttUrl = process.env.MQTT_URL;
+    const mqttUsername = process.env.MQTT_USERNAME;
+    const mqttPassword = process.env.MQTT_PASSWORD;
+
+    if (!mqttUrl || !mqttUsername || !mqttPassword) {
+      console.error("Missing MQTT configuration values.");
+      return;
+    }
+    const client: MqttClient = mqtt.connect(mqttUrl, {
+      username: mqttUsername,
+      password: mqttPassword,
     });
 
     // S'abonner au topic spécifique à l'utilisateur
-    const topic = `iotensim/${CURRENT_USER_ID}/data`;
+    const topic = `iotensim/${process.env.CURRENT_USER_ID}/data`;
     //const topic = `esp32/frontend/data`;
     client.on("connect", () => {
       console.log("Connected to MQTT broker");

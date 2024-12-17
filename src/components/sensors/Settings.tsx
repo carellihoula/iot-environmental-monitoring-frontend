@@ -124,6 +124,7 @@ const SettingsContainer = styled.div`
 
 const Tabs = styled.div`
   display: flex;
+  // background-color: #000;
   justify-content: space-around;
   margin-bottom: 20px;
   border-bottom: 1px solid #444;
@@ -136,6 +137,7 @@ const Tab = styled.div<TabProps>`
   padding: 10px 20px;
   cursor: pointer;
   font-weight: bold;
+  background-color: ${(props) => props.active && "#252525"};
   color: ${(props) => (props.active ? "#fff" : "#aaa")};
   border-bottom: ${(props) => (props.active ? "3px solid #3c1bd1" : "none")};
 
