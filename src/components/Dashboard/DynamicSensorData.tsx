@@ -10,39 +10,39 @@ interface DynamicSensorDataProps {
   sensors: Sensor[];
 }
 
+// Utility function to handle hex to little endian conversion
+const hexToLittleEndian = (hex: string): number => {
+  const cleanHex = hex.replace("0x", "");
+  const pairs = cleanHex.match(/.{2}/g) || [];
+  return parseInt(pairs.reverse().join(""), 16);
+};
+
+// Custom measures handling
+const customMeasures = {
+  humidity: {
+    units: ["rh", "decimal"],
+    convert: (value: number, from: string, to: string) => {
+      if (from === to) return value;
+      if (from === "rh" && to === "decimal") return value / 100;
+      if (from === "decimal" && to === "rh") return value * 100;
+      return value;
+    },
+  },
+  hexLittleEndian: {
+    units: ["hex", "decimal"],
+    convert: (value: string | number, from: string, to: string) => {
+      if (from === to) return Number(value);
+      if (from === "hex" && to === "decimal") {
+        return typeof value === "string" ? hexToLittleEndian(value) : value;
+      }
+      return Number(value);
+    },
+  },
+};
+
 const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
   const { visibleMeasures } = useSensorContext();
   const [selectedUnits, setSelectedUnits] = useState<Record<string, Unit>>({});
-
-  // Initialize default units for each sensor and measure
-  useEffect(() => {
-    const initialUnits: Record<string, Unit> = {};
-
-    sensors.forEach((sensor) => {
-      if (sensor.data && sensor.id) {
-        Object.entries(sensor.data).forEach(([key, entry]) => {
-          if (sensor.id && visibleMeasures[sensor.id]?.[key]) {
-            try {
-              const measure = entry.measure as Measure;
-              const possibilities = convert().possibilities(measure);
-              if (possibilities.length > 0) {
-                initialUnits[`${sensor.id}-${key}`] = possibilities[0];
-              }
-            } catch (error) {
-              console.warn(
-                `Could not get possibilities for measure ${entry.measure}`
-              );
-            }
-          }
-        });
-      }
-    });
-
-    setSelectedUnits((prev) => ({
-      ...prev,
-      ...initialUnits,
-    }));
-  }, [sensors, visibleMeasures]);
 
   const handleUnitChange = (sensorId: string, key: string, newUnit: Unit) => {
     setSelectedUnits((prev) => ({
@@ -51,18 +51,44 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
     }));
   };
 
+  const getAvailableUnits = (measure: string): Unit[] => {
+    // Check if it's a custom measure
+    if (measure in customMeasures) {
+      return customMeasures[measure as keyof typeof customMeasures]
+        .units as Unit[];
+    }
+
+    // Try standard convert-units
+    try {
+      return convert().possibilities(measure as Measure) as Unit[];
+    } catch {
+      return [];
+    }
+  };
+
   const convertValue = (
-    value: number,
-    measure: Measure,
-    fromUnit: Unit,
-    toUnit: Unit
+    value: string | number,
+    measure: string,
+    fromUnit: string,
+    toUnit: string
   ): number => {
     try {
-      if (!toUnit) return value;
-      return convert(value).from(fromUnit).to(toUnit);
+      // Handle custom measures
+      if (measure in customMeasures) {
+        return customMeasures[measure as keyof typeof customMeasures].convert(
+          value as number,
+          fromUnit,
+          toUnit
+        );
+      }
+
+      // Handle standard convert-units measures
+      return convert(Number(value))
+        .from(fromUnit as Unit)
+        .to(toUnit as Unit);
     } catch (error) {
-      console.warn(`Conversion error: ${error}`);
-      return value;
+      console.warn("Conversion error:", error);
+      return Number(value);
     }
   };
 
@@ -72,7 +98,7 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
         if (!sensor.data || !sensor.id) return null;
 
         const allMeasuresHiddenForSensor = Object.keys(sensor.data).every(
-          (key) => sensor.id && !visibleMeasures[sensor.id]?.[key]
+          (key) => !visibleMeasures[sensor.id!]?.[key]
         );
 
         return (
@@ -86,44 +112,39 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
                 <NoDataMessage>Aucune mesure activée</NoDataMessage>
               ) : (
                 Object.entries(sensor.data).map(([key, entry]) => {
-                  if (sensor.id && !visibleMeasures[sensor.id]?.[key])
-                    return null;
+                  if (!visibleMeasures[sensor.id!]?.[key]) return null;
 
-                  const value = entry.value;
-                  const measure = entry.measure as Measure;
+                  const value = entry.value ?? "";
+                  const measure = entry.measure;
 
-                  let units: Unit[] = [];
-                  try {
-                    units = convert().possibilities(measure);
-                  } catch (error) {
-                    console.warn(`Could not get units for measure ${measure}`);
-                    return null;
-                  }
-
+                  const units = getAvailableUnits(measure || "");
                   if (units.length === 0) return null;
 
                   const baseUnit = units[0];
                   const selectedUnit =
                     selectedUnits[`${sensor.id}-${key}`] || baseUnit;
 
-                  const convertedValue =
-                    typeof value === "number"
-                      ? convertValue(value, measure, baseUnit, selectedUnit)
-                      : 0;
+                  const convertedValue = convertValue(
+                    value as string | number,
+                    measure || "",
+                    baseUnit,
+                    selectedUnit
+                  );
 
                   return (
                     <ContainerData key={`${sensor.id}-${key}`}>
                       <DataLine>
                         <div>{key.charAt(0).toUpperCase() + key.slice(1)}</div>
                         <div className="value">
-                          {toExponentialIfNeeded(convertedValue)}
+                          {measure === "humidity"
+                            ? `${convertedValue}%`
+                            : toExponentialIfNeeded(convertedValue)}
                         </div>
                         <UnitSelectorDropdown
                           units={units}
                           selectedUnit={selectedUnit}
                           onUnitChange={(newUnit: Unit) =>
-                            sensor.id &&
-                            handleUnitChange(sensor.id, key, newUnit)
+                            handleUnitChange(sensor.id!, key, newUnit)
                           }
                         />
                       </DataLine>
