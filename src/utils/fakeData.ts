@@ -33,6 +33,10 @@ export const fakeData: Sensor[] = [
         value: 45,
         measure: "mass",
       },
+      hexValue3: {
+        value: "0xFFEE", // En decimal: 61439 (après conversion little endian)
+        measure: "hexLittleEndian",
+      },
     },
   },
   {
