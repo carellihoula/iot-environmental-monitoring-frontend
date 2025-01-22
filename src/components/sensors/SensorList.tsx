@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { sensors } from "../../utils/constants";
+
 import SensorItem from "./SensorItem";
+import { fakeData } from "../../utils/fakeData";
 
 // Composant principal
 const SensorList: React.FC = () => {
@@ -22,7 +23,7 @@ const SensorList: React.FC = () => {
     >
       <h2 className="raleway-bold ">Capteurs</h2>
       <SensorGrid>
-        {sensors.map((sensor) => (
+        {fakeData.map((sensor) => (
           <SensorItem key={sensor.id} sensor={sensor} onToggle={handleToggle} />
         ))}
       </SensorGrid>

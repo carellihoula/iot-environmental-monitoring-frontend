@@ -1,21 +1,48 @@
-import React, { useState } from "react";
-//import { iconMapping } from "../../utils/constants";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSensorContext } from "../../context/SensorContext";
 import { Sensor } from "../../interface_types/types";
 import UnitSelectorDropdown from "../measures/UnitSelectorDropdown";
-import convert, { Unit } from "convert-units";
+import convert, { Measure, Unit } from "convert-units";
 import { toExponentialIfNeeded } from "../../utils/toExponential";
 
 interface DynamicSensorDataProps {
   sensors: Sensor[];
 }
+
 const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
   const { visibleMeasures } = useSensorContext();
-  const units: Unit[] = convert().from("kg").possibilities();
-
-  // Utiliser un état global pour stocker les unités sélectionnées
   const [selectedUnits, setSelectedUnits] = useState<Record<string, Unit>>({});
+
+  // Initialize default units for each sensor and measure
+  useEffect(() => {
+    const initialUnits: Record<string, Unit> = {};
+
+    sensors.forEach((sensor) => {
+      if (sensor.data && sensor.id) {
+        Object.entries(sensor.data).forEach(([key, entry]) => {
+          if (sensor.id && visibleMeasures[sensor.id]?.[key]) {
+            try {
+              const measure = entry.measure as Measure;
+              const possibilities = convert().possibilities(measure);
+              if (possibilities.length > 0) {
+                initialUnits[`${sensor.id}-${key}`] = possibilities[0];
+              }
+            } catch (error) {
+              console.warn(
+                `Could not get possibilities for measure ${entry.measure}`
+              );
+            }
+          }
+        });
+      }
+    });
+
+    setSelectedUnits((prev) => ({
+      ...prev,
+      ...initialUnits,
+    }));
+  }, [sensors, visibleMeasures]);
 
   const handleUnitChange = (sensorId: string, key: string, newUnit: Unit) => {
     setSelectedUnits((prev) => ({
@@ -24,11 +51,28 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
     }));
   };
 
+  const convertValue = (
+    value: number,
+    measure: Measure,
+    fromUnit: Unit,
+    toUnit: Unit
+  ): number => {
+    try {
+      if (!toUnit) return value;
+      return convert(value).from(fromUnit).to(toUnit);
+    } catch (error) {
+      console.warn(`Conversion error: ${error}`);
+      return value;
+    }
+  };
+
   return (
     <Container>
       {sensors.map((sensor) => {
+        if (!sensor.data || !sensor.id) return null;
+
         const allMeasuresHiddenForSensor = Object.keys(sensor.data).every(
-          (key) => !visibleMeasures[sensor.id!]?.[key]
+          (key) => sensor.id && !visibleMeasures[sensor.id]?.[key]
         );
 
         return (
@@ -41,15 +85,30 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
               {allMeasuresHiddenForSensor ? (
                 <NoDataMessage>Aucune mesure activée</NoDataMessage>
               ) : (
-                Object.entries(sensor.data).map(([key, value]) => {
-                  if (!visibleMeasures[sensor.id!]?.[key]) return null;
+                Object.entries(sensor.data).map(([key, entry]) => {
+                  if (sensor.id && !visibleMeasures[sensor.id]?.[key])
+                    return null;
 
+                  const value = entry.value;
+                  const measure = entry.measure as Measure;
+
+                  let units: Unit[] = [];
+                  try {
+                    units = convert().possibilities(measure);
+                  } catch (error) {
+                    console.warn(`Could not get units for measure ${measure}`);
+                    return null;
+                  }
+
+                  if (units.length === 0) return null;
+
+                  const baseUnit = units[0];
                   const selectedUnit =
-                    selectedUnits[`${sensor.id}-${key}`] || "kg";
+                    selectedUnits[`${sensor.id}-${key}`] || baseUnit;
 
                   const convertedValue =
                     typeof value === "number"
-                      ? convert(value).from("kg").to(selectedUnit)
+                      ? convertValue(value, measure, baseUnit, selectedUnit)
                       : 0;
 
                   return (
@@ -63,7 +122,8 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
                           units={units}
                           selectedUnit={selectedUnit}
                           onUnitChange={(newUnit: Unit) =>
-                            handleUnitChange(sensor.id!, key, newUnit)
+                            sensor.id &&
+                            handleUnitChange(sensor.id, key, newUnit)
                           }
                         />
                       </DataLine>
@@ -82,13 +142,11 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
 export default DynamicSensorData;
 
 const Container = styled.div`
-  //background-color: red;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 50px;
   font-family: "Raleway", sans-serif;
-  //width: 100%;
   h4 {
     color: #fff;
     margin-bottom: 10px;
@@ -135,37 +193,8 @@ const DataLine = styled.div`
   align-items: center;
   justify-content: space-around;
   gap: 10px;
-  // background-color: red;
   width: 80%;
   font-size: 1.3rem;
-  .units {
-    display: flex;
-    align-items: center;
-    position: relative;
-    justify-content: space-between;
-    background: #000;
-    min-width: 90px;
-    max-width: 100px;
-    height: 22px;
-    padding: 8px;
-    border-radius: 10px;
-    .selector_units {
-      display: flex;
-      flex-direction: column;
-      background-color: #000;
-      padding: 8px;
-      border-radius: 10px;
-
-      position: absolute;
-      bottom: 0;
-    }
-    .truncate {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 80%;
-    }
-  }
 `;
 
 const NoDataMessage = styled.div`
@@ -173,6 +202,7 @@ const NoDataMessage = styled.div`
   font-size: 1.2rem;
   text-align: center;
 `;
+
 const SensorContainer = styled.div`
   width: 350px;
 `;

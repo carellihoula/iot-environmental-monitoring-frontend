@@ -1,6 +1,9 @@
 // Types pour les données du capteur
 export type SensorData = {
-  [key: string]: number | string | null; // Les données peuvent être des nombres ou des chaînes
+  [key: string]: {
+    value: number | string | null;
+    measure?: string;
+  };
 };
 
 export type Sensor = {

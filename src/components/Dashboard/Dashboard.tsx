@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { useMenuContext } from "../../context/MenuContext";
-import { sensors } from "../../utils/constants";
 import AddSensor from "../sensors/AddSensor";
 import SensorSelection from "../sensors/SensorSelection";
 import Settings from "../sensors/Settings";
 import DynamicSensorData from "./DynamicSensorData";
 import HandleSensor from "./HandleSensor";
+import { fakeData } from "../../utils/fakeData";
 
 const Dashboard: React.FC = () => {
   // État pour un seul capteur
@@ -16,13 +16,13 @@ const Dashboard: React.FC = () => {
   const renderContent = () => {
     switch (selectedMenu?.id) {
       case 1:
-        if (!sensors || sensors.length === 0) {
+        if (!fakeData || fakeData.length === 0) {
           return <div>Oops, aucun capteur configuré</div>;
         }
         return (
           <>
-            <HandleSensor sensors={sensors} />
-            <DynamicSensorData sensors={sensors} />
+            <HandleSensor sensors={fakeData} />
+            <DynamicSensorData sensors={fakeData} />
           </>
         );
       case 2:
