@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { Sensor } from "../../interface_types/types";
 import CopyToClipboard from "../Common/CopyToClipboard";
 import InputField from "../Common/InputField";
+import convert, { Unit } from "convert-units";
 
 const SensorForm: React.FC = () => {
   const [formData, setFormData] = useState<Sensor>({
@@ -91,10 +92,36 @@ const MeasurementAdder: React.FC<MeasurementAdderProps> = ({
   addMeasurement,
 }) => {
   const [key, setKey] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>(""); // État pour le champ de recherche
+  const [filteredMeasures, setFilteredMeasures] = useState<string[]>([]);
+  const [magnitude, setMagnitude] = useState<string>("");
+  const [unitOptions, setUnitOptions] = useState<Unit[]>(
+    convert().possibilities(searchTerm as convert.Measure)
+  );
+  const [selectedUnit, setSelectedUnit] = useState<string>("");
 
+  // Fonction pour gérer les changements dans le champ de grandeur
+  const handleMagnitudeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const measures = convert().measures();
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    // Filtrer les mesures de `convert().measures()` en fonction du terme de recherche
+
+    const filtered = measures.filter((measure) =>
+      measure.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredMeasures(filtered);
+  };
+
+  // Fonction pour gérer la sélection d'une unité
+  const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedUnit(e.target.value);
+  };
   const handleAdd = () => {
-    if (key) {
-      addMeasurement(key, null); // La valeur est toujours null
+    if (key && searchTerm && selectedUnit) {
+      // Ajouter la mesure avec la grandeur et l'unité sélectionnées
+      addMeasurement(`${key} (${searchTerm}, ${selectedUnit})`, null);
       setKey(""); // Réinitialiser le champ de la clé
     }
   };
@@ -117,6 +144,34 @@ const MeasurementAdder: React.FC<MeasurementAdderProps> = ({
         width="100%"
         icon={<CiCirclePlus size={20} />}
       />
+      {/* Champ pour la grandeur */}
+      <InputField
+        placeholder="Entrez une grandeur (ex: masse, longueur)"
+        value={searchTerm}
+        onChange={handleMagnitudeChange}
+        height="55px"
+        width="100%"
+        margin="10px 0"
+      />
+      {/* Liste filtrée des grandeurs */}
+      <ul>
+        {convert().measures().length > 0 ? (
+          filteredMeasures.map((measure) => <li key={measure}>{measure}</li>)
+        ) : (
+          <li>Aucune grandeur trouvée</li>
+        )}
+      </ul>
+
+      {/* Sélectionner l'unité de la grandeur */}
+      {unitOptions.length > 0 && (
+        <select value={selectedUnit} onChange={handleUnitChange}>
+          {unitOptions.map((unit) => (
+            <option key={unit} value={unit}>
+              {unit}
+            </option>
+          ))}
+        </select>
+      )}
       <button
         type="button"
         onClick={handleAdd}
@@ -188,11 +243,16 @@ const Mesure = styled.div`
 const MeasurementAdderStyled = styled.div`
   display: flex;
   align-items: center;
-
+  flex-direction: column;
   // background-color: red;
   width: 100%;
   gap: 10px;
-
+  select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+  }
   .add__measure {
     height: 55px;
     background-color: #3c1bd1;

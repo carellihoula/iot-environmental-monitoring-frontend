@@ -32,21 +32,22 @@ export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const mqttUrl = process.env.MQTT_URL;
-    const mqttUsername = process.env.MQTT_USERNAME;
-    const mqttPassword = process.env.MQTT_PASSWORD;
+    const mqttUrl = import.meta.env.MQTT_URL || "";
+    const mqttUsername = import.meta.env.MQTT_USERNAME || "";
+    const mqttPassword = import.meta.env.MQTT_PASSWORD || "";
 
     if (!mqttUrl || !mqttUsername || !mqttPassword) {
       console.error("Missing MQTT configuration values.");
       return;
     }
+    mqttUsername;
     const client: MqttClient = mqtt.connect(mqttUrl, {
       username: mqttUsername,
       password: mqttPassword,
     });
 
     // S'abonner au topic spécifique à l'utilisateur
-    const topic = `iotensim/${process.env.CURRENT_USER_ID}/data`;
+    const topic = `iotensim/${import.meta.env.CURRENT_USER_ID}/data`;
     //const topic = `esp32/frontend/data`;
     client.on("connect", () => {
       console.log("Connected to MQTT broker");

@@ -10,10 +10,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <ProtectedRoute />, // Protéger les routes privées
+    element: <ProtectedRoute />, // to protect private routes
     children: [
       {
-        index: true, // Route par défaut pour `/`
+        index: true, // to set the default route
         element: <DashboardPage />,
       },
       {

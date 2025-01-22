@@ -24,7 +24,8 @@ const HandleSensor: React.FC<HandleSensorProps> = ({ sensors }) => {
     <Container>
       {sensors.map((sensor) => (
         <SensorContainer key={sensor.id}>
-          <h4>Les Mesures du Capteur {sensor.name}</h4>
+          <h4 className="text-blue-800">Les Mesures du Capteur {sensor.name}</h4>
+          
           <SubContainer>
             {Object.keys(sensor.data).map((key, index) => {
               const IconOrUrl = iconMapping[key] || iconMapping["default"];

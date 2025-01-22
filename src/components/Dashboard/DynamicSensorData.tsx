@@ -1,41 +1,71 @@
-import React from "react";
+import React, { useState } from "react";
 //import { iconMapping } from "../../utils/constants";
 import styled from "styled-components";
 import { useSensorContext } from "../../context/SensorContext";
 import { Sensor } from "../../interface_types/types";
+import UnitSelectorDropdown from "../measures/UnitSelectorDropdown";
+import convert, { Unit } from "convert-units";
+import { toExponentialIfNeeded } from "../../utils/toExponential";
 
 interface DynamicSensorDataProps {
   sensors: Sensor[];
 }
-
 const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
   const { visibleMeasures } = useSensorContext();
+  const units: Unit[] = convert().from("kg").possibilities();
+
+  // Utiliser un état global pour stocker les unités sélectionnées
+  const [selectedUnits, setSelectedUnits] = useState<Record<string, Unit>>({});
+
+  const handleUnitChange = (sensorId: string, key: string, newUnit: Unit) => {
+    setSelectedUnits((prev) => ({
+      ...prev,
+      [`${sensorId}-${key}`]: newUnit,
+    }));
+  };
 
   return (
     <Container>
       {sensors.map((sensor) => {
-        // Vérifier si toutes les mesures pour ce capteur sont désactivées
-
         const allMeasuresHiddenForSensor = Object.keys(sensor.data).every(
           (key) => !visibleMeasures[sensor.id!]?.[key]
         );
 
         return (
           <SensorContainer key={sensor.id}>
-            <h4>Données provenant du capteur {sensor.name}</h4>
+            <h4 className="text-blue-600">
+              Données provenant du capteur {sensor.name}
+            </h4>
+
             <SubContainer>
               {allMeasuresHiddenForSensor ? (
                 <NoDataMessage>Aucune mesure activée</NoDataMessage>
               ) : (
                 Object.entries(sensor.data).map(([key, value]) => {
-                  // Ne pas afficher si la mesure est masquée
                   if (!visibleMeasures[sensor.id!]?.[key]) return null;
+
+                  const selectedUnit =
+                    selectedUnits[`${sensor.id}-${key}`] || "kg";
+
+                  const convertedValue =
+                    typeof value === "number"
+                      ? convert(value).from("kg").to(selectedUnit)
+                      : 0;
 
                   return (
                     <ContainerData key={`${sensor.id}-${key}`}>
                       <DataLine>
                         <div>{key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                        <div className="value"> {value}</div>
+                        <div className="value">
+                          {toExponentialIfNeeded(convertedValue)}
+                        </div>
+                        <UnitSelectorDropdown
+                          units={units}
+                          selectedUnit={selectedUnit}
+                          onUnitChange={(newUnit: Unit) =>
+                            handleUnitChange(sensor.id!, key, newUnit)
+                          }
+                        />
                       </DataLine>
                     </ContainerData>
                   );
@@ -90,20 +120,52 @@ const ContainerData = styled.div`
     background: #000;
     text-align: center;
     min-width: 60px;
-    height: 22px;
+    max-width: 100px; /* Ajout d'une largeur maximale */
+    height: auto; /* Permet une adaptation automatique */
     padding: 8px;
     border-radius: 10px;
+    overflow: hidden; /* Évite les débordements */
+    white-space: nowrap; /* Empêche les retours à la ligne */
+    font-size: 1rem; /* Assurez-vous que le texte reste lisible */
   }
 `;
 
 const DataLine = styled.div`
   display: flex;
   align-items: center;
-
-  justify-content: space-between;
+  justify-content: space-around;
+  gap: 10px;
   // background-color: red;
   width: 80%;
   font-size: 1.3rem;
+  .units {
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: space-between;
+    background: #000;
+    min-width: 90px;
+    max-width: 100px;
+    height: 22px;
+    padding: 8px;
+    border-radius: 10px;
+    .selector_units {
+      display: flex;
+      flex-direction: column;
+      background-color: #000;
+      padding: 8px;
+      border-radius: 10px;
+
+      position: absolute;
+      bottom: 0;
+    }
+    .truncate {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 80%;
+    }
+  }
 `;
 
 const NoDataMessage = styled.div`

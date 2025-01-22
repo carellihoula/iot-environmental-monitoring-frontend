@@ -3,11 +3,22 @@ import Sidebar from "../components/Layout/Sidebar";
 import MainInterface from "../components/MainInterface";
 import { Menu } from "../utils/constants";
 
+
 const DashboardPage = () => {
+  /*const [theme, setTheme] = useState("mytheme");
+  const toggleTheme = () => {
+    setTheme(theme === "mytheme" ? "dark" : "mytheme");
+  }; data-theme={theme} */
   return (
-    <Container style={{ backgroundColor: "#000" }}>
+    <Container style={{ backgroundColor: "#000" }} >
       <Sidebar list={Menu} />
       <MainInterface />
+      {/*<button
+        onClick={toggleTheme}
+        className="btn btn-primary"
+      >
+        Toggle Theme
+      </button>*/}
     </Container>
   );
 };
