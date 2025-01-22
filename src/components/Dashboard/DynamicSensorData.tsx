@@ -120,13 +120,13 @@ const ContainerData = styled.div`
     background: #000;
     text-align: center;
     min-width: 60px;
-    max-width: 100px; /* Ajout d'une largeur maximale */
-    height: auto; /* Permet une adaptation automatique */
+    max-width: 100px;
+    height: auto;
     padding: 8px;
     border-radius: 10px;
-    overflow: hidden; /* Évite les débordements */
-    white-space: nowrap; /* Empêche les retours à la ligne */
-    font-size: 1rem; /* Assurez-vous que le texte reste lisible */
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 1rem;
   }
 `;
 
