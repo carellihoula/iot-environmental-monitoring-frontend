@@ -6,23 +6,24 @@ import SensorSelection from "../sensors/SensorSelection";
 import Settings from "../sensors/Settings";
 import DynamicSensorData from "./DynamicSensorData";
 import HandleSensor from "./HandleSensor";
-import { fakeData } from "../../utils/fakeData";
+//import { fakeData } from "../../utils/fakeData";
+import { useMQTTContext } from "../../context/MqttContext";
 
 const Dashboard: React.FC = () => {
   // État pour un seul capteur
   const { selectedMenu } = useMenuContext();
-  //const { sensors } = useMQTTContext();
+  const { sensors } = useMQTTContext();
 
   const renderContent = () => {
     switch (selectedMenu?.id) {
       case 1:
-        if (!fakeData || fakeData.length === 0) {
+        if (!sensors || sensors.length === 0) {
           return <div>Oops, aucun capteur configuré</div>;
         }
         return (
           <>
-            <HandleSensor sensors={fakeData} />
-            <DynamicSensorData sensors={fakeData} />
+            <HandleSensor sensors={sensors} />
+            <DynamicSensorData sensors={sensors} />
           </>
         );
       case 2:
