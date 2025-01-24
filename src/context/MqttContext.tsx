@@ -5,21 +5,19 @@ import React, {
   ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { validateSensorData } from "../utils/validateSensorData";
+import { Sensor } from "../interface_types/types";
 
 // Types pour les données des capteurs
-export interface SensorData {
-  id: string;
-  name: string;
-  owner_id: string;
-  data: Record<string, number | string>;
-}
 
 // Types du contexte MQTT
 interface MQTTContextType {
-  sensors: SensorData[]; // Liste des capteurs
+  sensors: Sensor[]; // Liste des capteurs
+  connectionStatus: "connected" | "disconnected" | "connecting";
+  error: string | null;
 }
 
 // Créer le contexte MQTT
@@ -28,13 +26,17 @@ const MQTTContext = createContext<MQTTContextType | undefined>(undefined);
 export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [sensors, setSensors] = useState<SensorData[]>([]);
+  const [sensors, setSensors] = useState<Sensor[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<
+    "connected" | "disconnected" | "connecting"
+  >("disconnected");
 
   useEffect(() => {
-    const mqttUrl = import.meta.env.MQTT_URL || "";
-    const mqttUsername = import.meta.env.MQTT_USERNAME || "";
-    const mqttPassword = import.meta.env.MQTT_PASSWORD || "";
+    const mqttUrl = import.meta.env.VITE_MQTT_URL;
+    console.log(mqttUrl);
+    const mqttUsername = import.meta.env.VITE_MQTT_USERNAME;
+    const mqttPassword = import.meta.env.VITE_MQTT_PASSWORD;
 
     if (!mqttUrl || !mqttUsername || !mqttPassword) {
       console.error("Missing MQTT configuration values.");
@@ -44,24 +46,41 @@ export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
     const client: MqttClient = mqtt.connect(mqttUrl, {
       username: mqttUsername,
       password: mqttPassword,
+      rejectUnauthorized: true, // Vérifie la validité du certificat
     });
 
     // S'abonner au topic spécifique à l'utilisateur
-    const topic = `iotensim/${import.meta.env.CURRENT_USER_ID}/data`;
+    //const topic = `iotensim/${import.meta.env.VITE_CURRENT_USER_ID}/data`;
+    const topic = `esp32/frontend/data`;
     //const topic = `esp32/frontend/data`;
+
     client.on("connect", () => {
       console.log("Connected to MQTT broker");
+      setConnectionStatus("connected");
+      setError(null);
       client.subscribe(topic, (err: Error | null) => {
         if (err) console.error("Failed to subscribe to topic:", err);
         else console.log("Subscribed to topic:", topic);
       });
     });
 
+    client.on("error", (err) => {
+      console.error("MQTT connection error:", err);
+      setError(`Connection error: ${err.message}`);
+      setConnectionStatus("disconnected");
+    });
+
+    client.on("offline", () => {
+      console.log("MQTT client offline");
+      setConnectionStatus("disconnected");
+    });
+
     // Traiter les messages reçus
     client.on("message", (_topic: string, message: Buffer) => {
       try {
-        const sensorData: SensorData = JSON.parse(message.toString());
-        if (!validateSensorData(sensorData)) {
+        const sensorData: Sensor = JSON.parse(message.toString());
+        console.log(message.toString());
+        if (!sensorData) {
           setError(
             `Le JSON reçu est invalide. Format recommandé : {"id":"string","name":"string","owner_id":"string","data":{"field1":number,"field2":number,...}}`
           );
@@ -101,7 +120,9 @@ export const MQTTProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   return (
-    <MQTTContext.Provider value={{ sensors }}>{children}</MQTTContext.Provider>
+    <MQTTContext.Provider value={{ sensors, connectionStatus, error }}>
+      {children}
+    </MQTTContext.Provider>
   );
 };
 
