@@ -16,7 +16,6 @@ const SensorItem: React.FC<SensorItemProps> = ({
   initialState,
 }) => {
   const [isOn, setIsOn] = useState(initialState);
-  const [showModal, setShowModal] = useState(false);
 
   const handleToggle = () => {
     const newState = !isOn;

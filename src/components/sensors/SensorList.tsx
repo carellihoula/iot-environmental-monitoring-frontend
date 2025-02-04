@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import SensorItem from "./SensorItem";
@@ -6,16 +6,10 @@ import { fakeData } from "../../utils/fakeData";
 
 // Composant principal
 const SensorList: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-
   // Gestion du toggle pour un capteur
   const handleToggle = (sensorId: boolean | undefined) => {
     if (!sensorId) return;
   };
-
-  if (loading) {
-    return <p>Chargement...</p>;
-  }
 
   return (
     <Container

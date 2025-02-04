@@ -1,9 +1,7 @@
 import styled from "styled-components";
 import SensorList from "./SensorList";
 
-type Props = {};
-
-const SensorSelection = (props: Props) => {
+const SensorSelection = () => {
   return (
     <Container>
       <SensorList />

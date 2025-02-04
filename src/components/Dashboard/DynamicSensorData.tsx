@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useSensorContext } from "../../context/SensorContext";
 import { Sensor } from "../../interface_types/types";
@@ -137,7 +137,9 @@ const DynamicSensorData: React.FC<DynamicSensorDataProps> = ({ sensors }) => {
                         <div>{key.charAt(0).toUpperCase() + key.slice(1)}</div>
                         <div className="value">
                           {measure === "humidity"
-                            ? `${convertedValue}%`
+                            ? `${toExponentialIfNeeded(convertedValue)} ${
+                                selectedUnit.toString() === "rh" ? "%" : ""
+                              }`
                             : toExponentialIfNeeded(convertedValue)}
                         </div>
                         <UnitSelectorDropdown

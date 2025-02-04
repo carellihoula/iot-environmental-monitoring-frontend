@@ -6,7 +6,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { MdDashboard, MdSensors } from "react-icons/md";
 import { WiHumidity } from "react-icons/wi";
 import { IMenu } from "../interface_types/interface";
-import { Sensor, SensorData } from "../interface_types/types";
+//import { Sensor, SensorData } from "../interface_types/types";
 
 export const Menu: IMenu[] = [
   {

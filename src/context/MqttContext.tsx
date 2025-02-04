@@ -5,10 +5,9 @@ import React, {
   ReactNode,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from "react";
-import { validateSensorData } from "../utils/validateSensorData";
+//import { validateSensorData } from "../utils/validateSensorData";
 import { Sensor } from "../interface_types/types";
 
 // Types pour les données des capteurs
