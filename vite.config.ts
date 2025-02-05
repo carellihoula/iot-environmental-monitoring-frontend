@@ -10,6 +10,7 @@ export default defineConfig({
     nodePolyfills({
       include: ["process"],
     }),
+
     inject({
       process: "process/browser",
     }),
